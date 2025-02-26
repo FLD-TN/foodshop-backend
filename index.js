@@ -158,3 +158,5 @@ app.post('/api/products', async (req, res) => {
 
 // Chạy server
 app.listen(3000, '0.0.0.0', () => console.log('Server chạy tại http://0.0.0.0:3000'));
+
+// dòng này để test deploy ^_^
