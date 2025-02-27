@@ -4,6 +4,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const app = express();
+const User = require('./Model/UserModel');
+const Product = require('./Model/ProductModel');
 
 dotenv.config();
 const pass = process.env.PW;
@@ -20,24 +22,6 @@ mongoose.connect(connectionString, {
 .then(() => console.log('Kết nối MongoDB thành công'))
 .catch(err => console.log('Lỗi: ', err));
 
-// Schema cho User
-const userSchema = new mongoose.Schema({
-    email: { type: String, unique: true, required: true },
-    fullName: { type: String, required: true },
-    phoneNumber: { type: String, required: true },
-    role: { type: String, required: true },
-    password: { type: String, required: true }
-});
-const User = mongoose.model('User', userSchema);
-
-// Schema cho Product
-const productSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    description: String,
-    category: String
-});
-const Product = mongoose.model('Product', productSchema);
 
 // API CRUD cho User
 app.get('/api/users', async (req, res) => {
@@ -103,7 +87,6 @@ app.put('/api/users/:email', async (req, res) => {
 });
 
 
-
 // Xóa người dùng bằng email
 app.delete('/api/users/:email', async (req, res) => {
     try {
@@ -133,6 +116,7 @@ app.get('/api/users/search', async (req, res) => {
     }
 });
 
+
 // API CRUD cho Product
 app.get('/api/products', async (req, res) => {
     try {
@@ -143,7 +127,7 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-app.post('/api/products', async (req, res) => {
+app.post('/api/products', async (req, res) => { 
     try {
         const product = new Product(req.body);
         await product.save();
