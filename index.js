@@ -6,11 +6,12 @@ const dotenv = require('dotenv');
 const app = express();
 const User = require('./Model/UserModel');
 const Product = require('./Model/ProductModel');
+const Category = require('./Model/CategoryModel');
 
 dotenv.config();
 const pass = process.env.PW;
 
-app.use(cors());    
+app.use(cors());
 app.use(bodyParser.json());
 
 // Kết nối MongoDB Atlas
@@ -22,7 +23,7 @@ mongoose.connect(connectionString, {
 .then(() => console.log('Kết nối MongoDB thành công'))
 .catch(err => console.log('Lỗi: ', err));
 
-// API CRUD cho User
+// API CRUD cho User (giữ nguyên)
 app.get('/api/users', async (req, res) => {
     try {
         const users = await User.find();
@@ -36,16 +37,12 @@ app.post('/api/users', async (req, res) => {
     try {
         const user = new User(req.body);
         await user.save();
-        res.status(201).json({
-            status: true,
-            user
-        });
+        res.status(201).json({ status: true, user });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
 });
 
-// API đăng nhập
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -70,7 +67,6 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Sửa thông tin người dùng bằng email
 app.put('/api/users/:email', async (req, res) => {
     try {
         const { email } = req.params;
@@ -85,7 +81,6 @@ app.put('/api/users/:email', async (req, res) => {
     }
 });
 
-// Xóa người dùng bằng email
 app.delete('/api/users/:email', async (req, res) => {
     try {
         const { email } = req.params;
@@ -125,13 +120,10 @@ app.get('/api/products', async (req, res) => {
 
 app.post('/api/products', async (req, res) => { 
     try {
-        console.log('Received product:', req.body); // Log để kiểm tra dữ liệu từ frontend
+        console.log('Received product:', req.body);
         const product = new Product(req.body);
         await product.save();
-        res.status(201).json({
-            status: true,
-            product
-        });
+        res.status(201).json({ status: true, product });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
@@ -140,12 +132,8 @@ app.post('/api/products', async (req, res) => {
 app.put('/api/products/:productID', async (req, res) => {
     try {
         const { productID } = req.params;
-        console.log('Updating product with productID:', productID); // Log để debug
-        const updatedProduct = await Product.findOneAndUpdate(
-            { productID },
-            req.body,
-            { new: true }
-        );
+        console.log('Updating product with productID:', productID);
+        const updatedProduct = await Product.findOneAndUpdate({ productID }, req.body, { new: true });
         if (updatedProduct) {
             res.json(updatedProduct);
         } else {
@@ -159,7 +147,7 @@ app.put('/api/products/:productID', async (req, res) => {
 app.delete('/api/products/:productID', async (req, res) => {
     try {
         const { productID } = req.params;
-        console.log('Deleting product with productID:', productID); // Log để debug
+        console.log('Deleting product with productID:', productID);
         const deletedProduct = await Product.findOneAndDelete({ productID });
         if (deletedProduct) {
             res.json({ message: 'Xóa sản phẩm thành công!' });
@@ -179,6 +167,79 @@ app.get('/api/products/search', async (req, res) => {
         }
         const products = await Product.find({ productName: { $regex: name, $options: 'i' } });
         res.json(products);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// API CRUD cho Category
+app.get('/api/categories', async (req, res) => {
+    try {
+        const categories = await Category.find();
+        res.json(categories);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/categories', async (req, res) => {
+    try {
+        console.log('Received category:', req.body);
+        const category = new Category({
+            categoryId: req.body.categoryId,
+            categoryName: req.body.categoryName,
+            categoryIcon: req.body.categoryIcon
+        });
+        await category.save();
+        res.status(201).json({ status: true, category });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.put('/api/categories/:categoryId', async (req, res) => {
+    try {
+        const { categoryId } = req.params;
+        console.log('Updating category with categoryId:', categoryId);
+        const updatedCategory = await Category.findOneAndUpdate(
+            { categoryId },
+            { categoryName: req.body.categoryName, categoryIcon: req.body.categoryIcon },
+            { new: true }
+        );
+        if (updatedCategory) {
+            res.json(updatedCategory);
+        } else {
+            res.status(404).json({ message: 'Không tìm thấy loại sản phẩm!' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Cập nhật thất bại!', error });
+    }
+});
+
+app.delete('/api/categories/:categoryId', async (req, res) => {
+    try {
+        const { categoryId } = req.params;
+        console.log('Deleting category with categoryId:', categoryId);
+        const deletedCategory = await Category.findOneAndDelete({ categoryId });
+        if (deletedCategory) {
+            res.json({ message: 'Xóa loại sản phẩm thành công!' });
+        } else {
+            res.status(404).json({ message: 'Không tìm thấy loại sản phẩm!' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Xóa thất bại!', error });
+    }
+});
+
+// Thêm endpoint tìm kiếm category
+app.get('/api/categories/search', async (req, res) => {
+    try {
+        const { name } = req.query;
+        if (!name) {
+            return res.status(400).json({ message: 'Vui lòng cung cấp tên để tìm kiếm!' });
+        }
+        const categories = await Category.find({ categoryName: { $regex: name, $options: 'i' } });
+        res.json(categories);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
