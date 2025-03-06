@@ -1,4 +1,5 @@
 const express = require("express");
+const router = express.Router();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -7,12 +8,54 @@ const app = express();
 const User = require("./Model/UserModel");
 const Product = require("./Model/ProductModel");
 const Category = require("./Model/CategoryModel");
+const Notification = require("./Model/NotificationModel");
+const axios = require("axios");
 
 dotenv.config();
 const pass = process.env.PW;
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// Gửi thông báo đẩy & lưu vào MongoDB
+router.post("/sendNotification", async (req, res) => {
+    const { title, message } = req.body;
+
+    // Lưu vào MongoDB
+    const newNotification = new Notification({ title, message });
+    await newNotification.save();
+
+    // Gửi thông báo đẩy qua Firebase
+    const payload = {
+        to: "/topics/all_users",
+        notification: { title, body: message }
+    };
+
+    try {
+        await axios.post("https://fcm.googleapis.com/fcm/send", payload, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "key=YOUR_FIREBASE_SERVER_KEY"
+            }
+        });
+        res.json({ success: true, message: "Thông báo đã gửi và lưu vào MongoDB!" });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Lấy danh sách thông báo
+router.get("/getNotifications", async (req, res) => {
+    try {
+        const notifications = await Notification.find().sort({ timestamp: -1 });
+        res.json(notifications);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+module.exports = router;
+
 
 // Kết nối MongoDB Atlas
 const connectionString = `mongodb+srv://admin:${pass}@futurefoodshopdb.asiql.mongodb.net/foodShopDB?appName=FutureFoodShopDB`;
