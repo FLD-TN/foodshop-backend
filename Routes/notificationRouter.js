@@ -1,41 +1,44 @@
 const express = require("express");
 const router = express.Router();
-const Notification = require("../Model/NotificationModel"); // Đảm bảo đúng đường dẫn
 const axios = require("axios");
 
-// API gửi thông báo & lưu vào MongoDB
+// 🔹 URL mới cho Firebase Cloud Messaging HTTP v1 API
+const FCM_URL = "https://fcm.googleapis.com/v1/projects/futureonlinefoodshop/messages:send";
+
+// 🔹 Thay `YOUR_PROJECT_ID` bằng Project ID của bạn (Xem trong Firebase Console)
+const ACCESS_TOKEN = "ya29.a0AeXRPp6i5JrwfvU6aZ1ArdCDX5C6_7u3zRfIv_SW3sYuMY7PcO91jP25ecS7Tj3Kl4xyYgC7e-wRqqRg1LLCVTR5myrqqyc50f84NuPQTGn2JAydh0owxUSLTLKJ4ZuIhUehmObrRUrypW07bnBj9Os6TR68UTjtApfBifGtaCgYKAYoSARESFQHGX2MisMmSY9vxdM5L2ZOf3PjtYQ0175";  // 🔥 Copy Access Token bạn vừa lấy vào đây
+
+// API gửi thông báo đẩy
 router.post("/sendNotification", async (req, res) => {
     const { title, message } = req.body;
 
-    // Lưu vào MongoDB
-    const newNotification = new Notification({ title, message });
-    await newNotification.save();
-
-    // Gửi thông báo đẩy qua Firebase
-    const payload = {
-        to: "/topics/all_users",
-        notification: { title, body: message }
-    };
+    if (!title || !message) {
+        return res.status(400).json({ success: false, error: "Thiếu title hoặc message!" });
+    }
 
     try {
-        await axios.post("https://fcm.googleapis.com/fcm/send", payload, {
+        const payload = {
+            message: {
+                topic: "all_users",  // 🔹 Gửi đến tất cả user đăng ký "all_users"
+                notification: { 
+                    title: title, 
+                    body: message 
+                }
+            }
+        };
+
+        const fcmResponse = await axios.post(FCM_URL, payload, {
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": "key=YOUR_FIREBASE_SERVER_KEY"
+                "Authorization": `Bearer ${ACCESS_TOKEN}`,  // 🔥 Sử dụng Access Token
+                "Content-Type": "application/json"
             }
         });
-        res.json({ success: true, message: "Thông báo đã gửi và lưu vào MongoDB!" });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
 
-// API lấy danh sách thông báo từ MongoDB
-router.get("/getNotifications", async (req, res) => {
-    try {
-        const notifications = await Notification.find().sort({ timestamp: -1 });
-        res.json(notifications);
+        console.log("📢 Firebase response:", fcmResponse.data);
+        res.json({ success: true, message: "Thông báo đã gửi thành công!" });
+
     } catch (error) {
+        console.error("❌ Lỗi khi gửi FCM:", error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
