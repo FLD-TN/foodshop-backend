@@ -17,6 +17,7 @@ dotenv.config();
 const pass = process.env.PW;
 
 app.use(cors());
+app.use(express.json());
 app.use(bodyParser.json());
 
 // Gửi thông báo đẩy & lưu vào MongoDB
