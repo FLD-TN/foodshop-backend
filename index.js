@@ -159,18 +159,18 @@ app.delete('/api/products/:productID', async (req, res) => {
     }
 });
 
-app.get('/api/products/search', async (req, res) => {
-    try {
-        const { name } = req.query;
-        if (!name) {
-            return res.status(400).json({ message: 'Vui lòng cung cấp tên để tìm kiếm!' });
+    app.get('/api/products/search', async (req, res) => {
+        try {
+            const { name } = req.query;
+            if (!name) {
+                return res.status(400).json({ message: 'Vui lòng cung cấp tên để tìm kiếm!' });
+            }
+            const products = await Product.find({ productName: { $regex: name, $options: 'i' } });
+            res.json(products);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
         }
-        const products = await Product.find({ productName: { $regex: name, $options: 'i' } });
-        res.json(products);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+    });
 
 // API CRUD cho Category
 app.get('/api/categories', async (req, res) => {
@@ -235,13 +235,13 @@ app.delete('/api/categories/:categoryId', async (req, res) => {
 app.get('/api/categories/search', async (req, res) => {
     try {
         const { name } = req.query;
-        if (!name) {
+        if (!name || name.trim() === '') {
             return res.status(400).json({ message: 'Vui lòng cung cấp tên để tìm kiếm!' });
         }
         const categories = await Category.find({ categoryName: { $regex: name, $options: 'i' } });
         res.json(categories);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message, stack: err.stack });
     }
 });
 
