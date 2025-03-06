@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
+const Notification = require("../Model/NotificationModel"); // ⚠ Kiểm tra đường dẫn này!
 const axios = require("axios");
 
 // 🔹 URL mới cho Firebase Cloud Messaging HTTP v1 API
