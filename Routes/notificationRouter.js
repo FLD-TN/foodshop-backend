@@ -43,4 +43,14 @@ router.post("/sendNotification", async (req, res) => {
     }
 });
 
+router.get("/getNotifications", async (req, res) => {
+    try {
+        const notifications = await Notification.find().sort({ timestamp: -1 });
+        res.json(notifications);
+    } catch (error) {
+        console.error("❌ Lỗi khi lấy thông báo từ MongoDB:", error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 module.exports = router;
