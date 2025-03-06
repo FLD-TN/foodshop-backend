@@ -10,6 +10,8 @@ const Product = require("./Model/ProductModel");
 const Category = require("./Model/CategoryModel");
 const Notification = require("./Model/NotificationModel");
 const axios = require("axios");
+const notificationRoutes = require("./Routes/notificationRouter"); 
+app.use("/api", notificationRoutes);
 
 dotenv.config();
 const pass = process.env.PW;
