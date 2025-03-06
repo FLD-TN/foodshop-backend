@@ -19,6 +19,8 @@ const pass = process.env.PW;
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true })); // 🚀 Hỗ trợ `x-www-form-urlencoded`
+app.use("/api", notificationRoutes);
 
 // Gửi thông báo đẩy & lưu vào MongoDB
 router.post("/sendNotification", async (req, res) => {
