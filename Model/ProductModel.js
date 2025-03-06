@@ -10,6 +10,6 @@ const ProductSchema = new mongoose.Schema({
     discount: { type: Number, default: 0 }, // 👈 Thêm discount (theo %)
     discountAmount: { type: Number, default: 0 } // 👈 Thêm discountAmount (số tiền)
 }); 
-const Product = mongoose.model('Product', productSchema);
+const Product = mongoose.model('Product', ProductSchema);
 
 module.exports = Product;
