@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const notificationRoutes = require("./Routes/notificationRouter"); 
+const orderRoutes = require('./Routes/orderRoutes');
 
 dotenv.config();
 const app = express();
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 
 // ✅ Đăng ký routes (phải đặt sau middleware)
 app.use('/api', notificationRoutes);
+app.use('/api',orderRoutes);
 // 🔹 Kết nối MongoDB Atlas
 const connectionString = `mongodb+srv://admin:${process.env.PW}@futurefoodshopdb.asiql.mongodb.net/foodShopDB?appName=FutureFoodShopDB`;
 
