@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../Model/OrderModel');
 
-router.post('/api/orders', async (req, res) => {
+router.post('/orders', async (req, res) => {
     try {
         const orderData = req.body;
         const order = new Order(orderData);
