@@ -16,8 +16,7 @@ app.use(express.urlencoded({ extended: true })); // 🚀 Hỗ trợ `x-www-form-
 app.use(bodyParser.json());
 
 // ✅ Đăng ký routes (phải đặt sau middleware)
-app.use("/api", notificationRoutes);
-
+app.use('/api', notificationRoutes);
 // 🔹 Kết nối MongoDB Atlas
 const connectionString = `mongodb+srv://admin:${process.env.PW}@futurefoodshopdb.asiql.mongodb.net/foodShopDB?appName=FutureFoodShopDB`;
 
@@ -146,7 +145,7 @@ app.post("/api/categories", async (req, res) => {
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
-});
+}); 
 
 // ========== CHẠY SERVER ==========
 const PORT = process.env.PORT || 3000;
