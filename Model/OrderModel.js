@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
+    orderID: { type: String, unique: true }, // Thêm orderID
     userEmail: { type: String, required: true },
     products: [{
-        productID: { type: String, required: true }, // Tham chiếu đến productID trong Product collection
+        productID: { type: String, required: true },
         productName: { type: String, required: true },
         productPrice: { type: Number, required: true },
-        productImage: { type: String }, // Có thể null
-        quantity: { type: Number, required: true, min: 1 } // Thêm trường quantity, bắt buộc và lớn hơn 0
+        productImage: { type: String },
+        quantity: { type: Number, required: true, min: 1 }
     }],
     totalPrice: { type: Number, required: true },
     paymentMethod: { type: String, required: true },
