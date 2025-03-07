@@ -6,8 +6,7 @@ const Notification = require("../Model/NotificationModel");
 
 // 🔹 Firebase Cloud Messaging API (HTTP v1)
 const FCM_URL = "https://fcm.googleapis.com/v1/projects/futureonlinefoodshop/messages:send";
-const ACCESS_TOKEN = "ya29.a0AeXRPp7UJxGmxU1pjsI29e1wFL4Su0WYE0eSO1OPJYx6TOKngGxCQNp-yncBiazmTdGewzcKt1IlqmWKwIBqepJbgrSZ2Qt0mmoqU0IxMqUFUiem0Z4f1eN3kqBXyt0jzjqp5cAVI00WQujX0u7hW3nv1ZqDu599uqIaHjJycGKMuQaCgYKAVISARESFQHGX2MiCv6Ambkf86hoDxNCZJhVSA0181"; // 🔥 Thay bằng Access Token hợp lệ
-
+const ACCESS_TOKEN = "ya29.a0AeXRPp7NemvftX7DSJqoobGKvOkO_MgCj4h6MLYvnIS_EJq3SGas4ATh0HM1-6gzPptI0wtFOwmQxHiE1ZtS9KxEe0N9BdBe8ZNRWli1W4SsHYBScd_B1GotR4aG7kJqSof-CT6uFvskLKnL9Ko-oJDA_oIJN6ydivqTbD4SqQaCgYKAVESARESFQHGX2Mi5dNP6SwNoSNxS_LvAowgIw0177"
 // ✅ API Gửi thông báo đẩy & lưu vào MongoDB
 router.post("/sendNotification", async (req, res) => {
     console.log("📩 Yêu cầu nhận được:", req.body);
