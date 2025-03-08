@@ -39,6 +39,19 @@ router.get('/orders/status', async (req, res) => {
     }
 });
 
+//endpoint để lấy tất cả đơn hàng
+router.get('/orders', async (req, res) => {
+    try {
+        const orders = await Order.find();
+        res.json(orders);
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+// Endpoint để cập nhật trạng thái đơn hàng
 router.put('/orders/:orderID/status', async (req, res) => {
     try {
         const { orderID } = req.params;
