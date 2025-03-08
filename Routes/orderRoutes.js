@@ -39,4 +39,34 @@ router.get('/orders/status', async (req, res) => {
     }
 });
 
+router.put('/orders/:orderID/status', async (req, res) => {
+    try {
+        const { orderID } = req.params;
+        const { status } = req.body; // Truyền trạng thái mới (APPROVED hoặc khác)
+        const validStatuses = ["PENDING", "CANCELLED", "DELIVERED", "APPROVED", "SUCCESS"];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: "Trạng thái không hợp lệ" });
+        }
+        const order = await Order.findOneAndUpdate(
+            {
+                orderID: orderID
+            },
+            {
+                status: status
+            },
+            {
+                new: true, runValidators: true
+            }
+        );
+        if (!order) {
+            return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+        }
+        console.log("- Cập nhật trạng thái đơn hàng:", orderID);
+        res.status(200).json(order);
+    } catch (error) {
+        console.error("Cập nhật trạng thái đơn hàng thất bại !", error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 module.exports = router;

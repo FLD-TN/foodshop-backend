@@ -12,8 +12,8 @@ const app = express();
 
 // ✅ Middleware - Đảm bảo đúng thứ tự
 app.use(cors());
-app.use(express.json());  // 🚀 Đọc dữ liệu JSON từ `req.body`
-app.use(express.urlencoded({ extended: true })); // 🚀 Hỗ trợ `x-www-form-urlencoded`
+app.use(express.json());  //  Đọc dữ liệu JSON từ `req.body`
+app.use(express.urlencoded({ extended: true })); // Hỗ trợ `x-www-form-urlencoded`
 app.use(bodyParser.json());
 
 // ✅ Đăng ký routes (phải đặt sau middleware)
