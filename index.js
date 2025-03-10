@@ -7,6 +7,7 @@ const axios = require("axios");
 const notificationRoutes = require("./Routes/notificationRouter");
 const orderRoutes = require('./Routes/orderRoutes');
 const bannerRoutes = require('./Routes/bannerRoutes');
+const categoryRoutes = require('./Routes/categoryRoutes');
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 app.use('/api', notificationRoutes);
 app.use('/api', orderRoutes);
 app.use('/api', bannerRoutes);
+app.use('/api', categoryRoutes);
 // 🔹 Kết nối MongoDB Atlas
 const connectionString = `mongodb+srv://admin:${process.env.PW}@futurefoodshopdb.asiql.mongodb.net/foodShopDB?appName=FutureFoodShopDB`;
 
@@ -126,28 +128,6 @@ app.delete("/api/products/:productID", async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ message: "Xóa thất bại!", error });
-    }
-});
-
-// ========== API CRUD CHO CATEGORY ==========
-const Category = require("./Model/CategoryModel");
-
-app.get("/api/categories", async (req, res) => {
-    try {
-        const categories = await Category.find();
-        res.json(categories);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.post("/api/categories", async (req, res) => {
-    try {
-        const category = new Category(req.body);
-        await category.save();
-        res.status(201).json({ status: true, category });
-    } catch (err) {
-        res.status(400).json({ error: err.message });
     }
 });
 
