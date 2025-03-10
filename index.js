@@ -4,8 +4,9 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const axios = require("axios");
-const notificationRoutes = require("./Routes/notificationRouter"); 
+const notificationRoutes = require("./Routes/notificationRouter");
 const orderRoutes = require('./Routes/orderRoutes');
+const bannerRoutes = require('./Routes/bannerRoutes');
 
 dotenv.config();
 const app = express();
@@ -18,7 +19,8 @@ app.use(bodyParser.json());
 
 // ✅ Đăng ký routes (phải đặt sau middleware)
 app.use('/api', notificationRoutes);
-app.use('/api',orderRoutes);
+app.use('/api', orderRoutes);
+app.use('/api', bannerRoutes);
 // 🔹 Kết nối MongoDB Atlas
 const connectionString = `mongodb+srv://admin:${process.env.PW}@futurefoodshopdb.asiql.mongodb.net/foodShopDB?appName=FutureFoodShopDB`;
 
@@ -26,7 +28,7 @@ mongoose.connect(connectionString, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).then(() => console.log("✅ Kết nối MongoDB thành công"))
-.catch(err => console.log("❌ Lỗi kết nối MongoDB:", err));
+    .catch(err => console.log("❌ Lỗi kết nối MongoDB:", err));
 
 // ========== API CRUD CHO USER ==========
 const User = require("./Model/UserModel");
@@ -147,7 +149,7 @@ app.post("/api/categories", async (req, res) => {
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
-}); 
+});
 
 // ========== CHẠY SERVER ==========
 const PORT = process.env.PORT || 3000;
