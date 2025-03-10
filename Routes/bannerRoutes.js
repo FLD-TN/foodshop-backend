@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.post('/banner', async (req, res) => {
     try {
-        const banners = new Banner({
+        const banner = new Banner({
             imageUrl: req.body.imageUrl,
         });
 
@@ -23,4 +23,5 @@ router.get('/banners', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
 module.exports = router;
