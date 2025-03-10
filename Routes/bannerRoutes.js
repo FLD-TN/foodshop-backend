@@ -2,7 +2,7 @@ const express = require('express');
 const Banner = require('../Model/BannerModel');
 const router = express.Router();
 
-router.post('/banners', async (req, res) => {
+router.post('/banner', async (req, res) => {
     try {
         const banners = new Banner({
             imageUrl: req.body.imageUrl,
@@ -15,7 +15,7 @@ router.post('/banners', async (req, res) => {
     }
 });
 
-router.get('/banner', async (req, res) => {
+router.get('/banners', async (req, res) => {
     try {
         const banners = await Banner.find();
         res.json(banners);
