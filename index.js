@@ -100,6 +100,7 @@ app.post("/api/login", async (req, res) => {
                 fullName: user.fullName,
                 phoneNumber: user.phoneNumber,
                 role: user.role.toLowerCase(),
+                password: user.password
             });
         } else {
             res.status(401).json({ status: false, error: "Email hoặc mật khẩu không đúng" });
