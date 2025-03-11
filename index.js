@@ -76,6 +76,22 @@ app.put("/api/users/:email", async (req, res) => {
     }
 });
 
+app.delete("/api/users/:email", async (req, res) => {
+    try {
+        const { email } = req.params;
+        console.log("🗑 Xóa người dùng:", email);
+        const deletedUser = await User.findOneAndDelete({ email });
+
+        if (deletedUser) {
+            res.json({ message: "Xóa người dùng thành công!" });
+        } else {
+            res.status(404).json({ message: "Không tìm thấy người dùng!" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Xóa thất bại!", error: error.message });
+    }
+});
+
 app.get("/api/users/search", async (req, res) => {
     try {
         const { email } = req.query;
