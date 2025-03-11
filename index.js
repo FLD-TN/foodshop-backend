@@ -52,6 +52,43 @@ app.post("/api/users", async (req, res) => {
     }
 });
 
+app.put("/api/users/:email", async (req, res) => {
+    try {
+        const { email } = req.params;
+        console.log("🔄 Cập nhật người dùng:", email);
+
+        const existingUser = await User.findOne({ email });
+        if (!existingUser) {
+            return res.status(404).json({ message: "Không tìm thấy người dùng!" });
+        }
+
+        // Preserve the password if not provided in the update
+        if (!req.body.password) {
+            req.body.password = existingUser.password;
+        }
+
+        Object.assign(existingUser, req.body); // Cập nhật thông tin người dùng
+        const updatedUser = await existingUser.save();
+        res.json(updatedUser);
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({ message: "Cập nhật thất bại!", error: error.message });
+    }
+});
+
+app.get("/api/users/search", async (req, res) => {
+    try {
+        const { email } = req.query;
+        const users = await User.find({ email: { $regex: email, $options: 'i' } });
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+///API cho login
+
 app.post("/api/login", async (req, res) => {
     try {
         const { email, password } = req.body;
