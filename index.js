@@ -158,7 +158,6 @@ app.put("/api/products/:productID", async (req, res) => {
         if (!existingProduct) {
             return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
         }
-
         Object.assign(existingProduct, req.body); // Cập nhật sản phẩm
         const updatedProduct = await existingProduct.save();
         res.json(updatedProduct);
@@ -209,16 +208,14 @@ app.put("/api/categories/:categoryID", async (req, res) => {
     try {
         const { categoryID } = req.params;
         console.log("🔄 Cập nhật danh mục:", categoryID);
-
         const existingCategory = await Category.findOne({ categoryID });
-        if (existingCategory) {
-            Object.assign(existingCategory, req.body); // Cập nhật danh mục
-            const updatedCategory = await existingCategory.save();
-            res.json(updatedCategory);
-        } else
-            if (!existingCategory) {
-                return res.status(404).json({ message: "Không tìm thấy danh mục!" });
-            }
+        if (!existingCategory) {
+            return res.status(404).json({ message: "Không tìm thấy danh mục!" });
+        }
+        Object.assign(existingCategory, req.body); // Cập nhật danh mục
+        const updatedCategory = await existingCategory.save();
+        res.json(updatedCategory);
+
     } catch (error) {
         res.status(500).json({ message: "Cập nhật thất bại!", error });
     }
