@@ -205,6 +205,30 @@ app.post("/api/categories", async (req, res) => {
     }
 });
 
+app.put("/api/categories/:categoryID", async (req, res) => {
+    try {
+        const { categoryID } = req.params;
+        console.log("🔄 Cập nhật danh mục:", categoryID);
+
+        const existingCategory = await Category.findOne({ categoryID });
+        if (!existingCategory) {
+            return res.status(404).json({ message: "Không tìm thấy danh mục!" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Cập nhật thất bại!", error });
+    }
+});
+
+app.delete("/api/categories/:categoryID", async (req, res) => {
+    try {
+        const { categoryID } = req.params;
+        console.log("🗑 Xóa danh mục:", categoryID);
+        const deletedCategory = await Category.findOneAndDelete({ categoryID });    // Xóa danh mục
+    } catch (error) {
+        res.status(500).json({ message: "Xóa thất bại!", error });
+    }
+});
+
 // ========== CHẠY SERVER ==========
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server chạy tại http://0.0.0.0:${PORT}`));
