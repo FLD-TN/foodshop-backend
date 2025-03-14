@@ -211,9 +211,14 @@ app.put("/api/categories/:categoryID", async (req, res) => {
         console.log("🔄 Cập nhật danh mục:", categoryID);
 
         const existingCategory = await Category.findOne({ categoryID });
-        if (!existingCategory) {
-            return res.status(404).json({ message: "Không tìm thấy danh mục!" });
-        }
+        if (existingCategory) {
+            Object.assign(existingCategory, req.body); // Cập nhật danh mục
+            const updatedCategory = await existingCategory.save();
+            res.json(updatedCategory);
+        } else
+            if (!existingCategory) {
+                return res.status(404).json({ message: "Không tìm thấy danh mục!" });
+            }
     } catch (error) {
         res.status(500).json({ message: "Cập nhật thất bại!", error });
     }
@@ -223,7 +228,12 @@ app.delete("/api/categories/:categoryID", async (req, res) => {
     try {
         const { categoryID } = req.params;
         console.log("🗑 Xóa danh mục:", categoryID);
-        const deletedCategory = await Category.findOneAndDelete({ categoryID });    // Xóa danh mục
+        const deletedCategory = await Category.findOneAndDelete({ categoryID });   // Xóa danh mục
+        if (deletedCategory) {
+            res.json({ message: "Xóa danh mục thành công!" });
+        } else {
+            res.status(404).json({ message: "Không tìm thấy danh mục!" });
+        }
     } catch (error) {
         res.status(500).json({ message: "Xóa thất bại!", error });
     }
