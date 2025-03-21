@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
 
 const bannerSchema = new mongoose.Schema({
-    imageUrl: {
+    imageBannerURL: {
         type: String,
         required: true,
         trim: true
     },
+    BannerID: {
+        type: String,
+        required: true,
+        trim: true
+    }
 
 });
 
