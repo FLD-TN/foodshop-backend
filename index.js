@@ -17,10 +17,11 @@ app.use(express.json());  //  Đọc dữ liệu JSON từ `req.body`
 app.use(express.urlencoded({ extended: true })); // Hỗ trợ `x-www-form-urlencoded`
 app.use(bodyParser.json());
 
-// ✅ Đăng ký routes (phải đặt sau middleware)
+//  Đăng ký routes (phải đặt sau middleware)
 app.use('/api', notificationRoutes);
 app.use('/api', orderRoutes);
 app.use('/api', bannerRoutes);
+
 // 🔹 Kết nối MongoDB Atlas
 const connectionString = `mongodb+srv://admin:${process.env.PW}@futurefoodshopdb.asiql.mongodb.net/foodShopDB?appName=FutureFoodShopDB`;
 
