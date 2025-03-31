@@ -257,6 +257,25 @@ app.delete("/api/categories/:categoryID", async (req, res) => {
     }
 });
 
+app.get("/api/categories/search", async (req, res) => {
+    try {
+        const { name } = req.query; // Lấy tham số "name" từ query
+        if (!name) {
+            return res.status(400).json({ message: "Vui lòng cung cấp tên loại sản phẩm để tìm kiếm" });
+        }
+
+        // Tìm kiếm sản phẩm với tên chứa chuỗi query (không phân biệt hoa thường)
+        const categories = await Category.find({
+            categoryName: { $regex: name, $options: 'i' }
+        });
+
+        res.json(categories);
+    } catch (err) {
+        console.error("Error searching category:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ========== CHẠY SERVER ==========
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server chạy tại http://0.0.0.0:${PORT}`));
