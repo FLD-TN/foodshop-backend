@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-    orderID: { type: String, unique: true }, // Thêm orderID
+    orderID: { type: String, unique: true },
     userEmail: { type: String, required: true },
     userName: { type: String, required: true },
     products: [{
@@ -15,7 +15,8 @@ const orderSchema = new mongoose.Schema({
     paymentMethod: { type: String, required: true },
     status: { type: String, default: "PENDING" },
     address: { type: String, required: true },
-    phoneNumber: { type: String, required: true }
+    phoneNumber: { type: String, required: true },
+    orderDate: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Order', orderSchema);
