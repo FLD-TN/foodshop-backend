@@ -183,6 +183,25 @@ app.delete("/api/products/:productID", async (req, res) => {
     }
 });
 
+app.get("/api/products/search", async (req, res) => {
+    try {
+        const { name } = req.query; // Lấy tham số "name" từ query
+        if (!name) {
+            return res.status(400).json({ message: "Vui lòng cung cấp tên sản phẩm để tìm kiếm" });
+        }
+
+        // Tìm kiếm sản phẩm với tên chứa chuỗi query (không phân biệt hoa thường)
+        const products = await Product.find({
+            productName: { $regex: name, $options: 'i' }
+        });
+
+        res.json(products);
+    } catch (err) {
+        console.error("Error searching products:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ========== API CRUD CHO CATEGORY ==========
 const Category = require("./Model/CategoryModel");
 
