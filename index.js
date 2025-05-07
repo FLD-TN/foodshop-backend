@@ -7,6 +7,7 @@ const axios = require("axios");
 const notificationRoutes = require("./Routes/notificationRouter");
 const orderRoutes = require('./Routes/orderRoutes');
 const bannerRoutes = require('./Routes/bannerRoutes');
+const userRoutes = require('./Routes/userRoutes');
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 app.use('/api', notificationRoutes);
 app.use('/api', orderRoutes);
 app.use('/api', bannerRoutes);
+app.use('/api', userRoutes);
 
 // 🔹 Kết nối MongoDB Atlas
 const connectionString = `mongodb+srv://admin:${process.env.PW}@futurefoodshopdb.asiql.mongodb.net/foodShopDB?appName=FutureFoodShopDB`;
