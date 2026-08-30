@@ -8,6 +8,7 @@ const notificationRoutes = require("./Routes/notificationRouter");
 const orderRoutes = require('./Routes/orderRoutes');
 const bannerRoutes = require('./Routes/bannerRoutes');
 const userRoutes = require('./Routes/userRoutes');
+const { runMigrations } = require('./migrate');
 
 dotenv.config();
 const app = express();
@@ -25,13 +26,34 @@ app.use('/api', bannerRoutes);
 app.use('/api', userRoutes);
 
 // 🔹 Kết nối MongoDB Atlas
-const connectionString = `mongodb+srv://admin:${process.env.PW}@futurefoodshopdb.asiql.mongodb.net/foodShopDB?appName=FutureFoodShopDB`;
+// URI lấy từ biến môi trường MONGO_URI:
+//   - Chạy local: đặt trong file .env (cùng thư mục với index.js)
+//   - Deploy Render: đặt ở tab Environment của service
+const connectionString = process.env.MONGO_URI;
 
-mongoose.connect(connectionString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => console.log("✅ Kết nối MongoDB thành công"))
-    .catch(err => console.log("❌ Lỗi kết nối MongoDB:", err));
+if (!connectionString) {
+    console.error("❌ Thiếu biến môi trường MONGO_URI.");
+    console.error("   Tạo file .env cạnh index.js với nội dung:");
+    console.error("   MONGO_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/foodShopDB?retryWrites=true&w=majority");
+    process.exit(1);
+}
+
+mongoose.connect(connectionString)
+    .then(async () => {
+        console.log("✅ Kết nối MongoDB thành công");
+        // Tự chạy các migration chưa chạy (nạp dữ liệu mẫu cho DB mới...).
+        // Mỗi migration chỉ chạy 1 lần, đã ghi nhận trong collection _migrations.
+        try {
+            await runMigrations();
+        } catch (err) {
+            // Migration lỗi thì vẫn để server chạy tiếp, chỉ log rõ trên Render Logs
+            console.error("⚠️  Migration thất bại:", err.message);
+        }
+    })
+    .catch(err => {
+        console.error("❌ Lỗi kết nối MongoDB:", err.message);
+        process.exit(1);
+    });
 
 // ========== API CRUD CHO USER ==========
 const User = require("./Model/UserModel");
